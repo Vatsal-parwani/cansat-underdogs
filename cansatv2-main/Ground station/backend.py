@@ -16,6 +16,7 @@ fig.suptitle('CanSat Live Telemetry')
 
 # Empty lists to hold the graphing data
 time_data, temp_data, alt_data = [], [], []
+packetID = []
 
 # --- System Setup ---
 try:
@@ -44,9 +45,8 @@ def update(frame):
     error_log["TOTAL_PACKETS"] += 1
     if ser.in_waiting > 0:
         raw_bytes = ser.readline()
-        decoded_string = raw_bytes.decode('utf-8').strip()
-
-        if decoded_string:
+        try:
+            decoded_string = raw_bytes.decode('utf-8').strip()
             if "ERROR" not in decoded_string:
                 data_list = decoded_string.split(',')
 
@@ -119,7 +119,7 @@ def update(frame):
             else:
                 error_log["PACKET_CORRUPTED"] += 1
                 error = "corrupt"
-        else:
+        except:
             error_log["PACKET_CORRUPTED"] += 1
             error = "corrupt"
     else:
